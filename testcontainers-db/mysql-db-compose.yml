@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_DATABASE=local_db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=12345
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./db/create_tables.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./db/insert.sql:/docker-entrypoint-initdb.d/2.sql
