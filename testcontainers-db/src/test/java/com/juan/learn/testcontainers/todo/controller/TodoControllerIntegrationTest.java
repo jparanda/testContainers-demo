@@ -1,6 +1,7 @@
 package com.juan.learn.testcontainers.todo.controller;
 
 
+import com.juan.learn.testcontainers.TestContainersDbApplication;
 import com.juan.learn.testcontainers.base.AbstractIntegrationTest;
 import com.juan.learn.testcontainers.todo.model.Todo;
 import org.assertj.core.api.Assertions;
@@ -22,8 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Testcontainers
-@SpringBootTest(classes = TodoControllerIntegrationTest.class,
+@SpringBootTest(classes = TestContainersDbApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TodoControllerIntegrationTest extends AbstractIntegrationTest {
 
@@ -33,7 +33,6 @@ class TodoControllerIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
-    @Sql({ "classpath:schema.sql", "classpath:data.sql" })
     @Test
     void getAllTest() {
         // Act
@@ -97,6 +96,6 @@ class TodoControllerIntegrationTest extends AbstractIntegrationTest {
                 .getForObject("http://localhost:" + port + "/todo-service/api/todos", Todo[].class);
 
         // Assert
-        Assertions.assertThat(todos.length).isEqualTo(2);
+        Assertions.assertThat(todos.length).isEqualTo(3);
     }
 }

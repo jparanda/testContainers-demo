@@ -1,5 +1,6 @@
 package com.juan.learn.testcontainers.base;
 
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
@@ -11,6 +12,11 @@ public abstract class AbstractIntegrationTest {
 
     static {
         mysqldb = new MySQLContainer(DockerImageName.parse("mysql:latest"));
+        mysqldb.withDatabaseName("todo_db");
+        mysqldb.withUsername("user");
+        mysqldb.withPassword("12345");
+        mysqldb.withInitScript("schema.sql");
+
         mysqldb.start();
     }
 
