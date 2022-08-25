@@ -2,7 +2,7 @@ package com.juan.learn.testcontainers.todo.controller;
 
 
 import com.juan.learn.testcontainers.TestContainersDbApplication;
-import com.juan.learn.testcontainers.base.AbstractIntegrationTest;
+import com.juan.learn.testcontainers.base.AbstractContainers;
 import com.juan.learn.testcontainers.todo.model.Todo;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,13 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.jdbc.Sql;
-import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +18,7 @@ import java.util.Map;
 
 @SpringBootTest(classes = TestContainersDbApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TodoControllerIntegrationTest extends AbstractIntegrationTest {
+class TodoControllerContainers extends AbstractContainers {
 
     @LocalServerPort
     private int port;

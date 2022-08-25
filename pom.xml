@@ -17,6 +17,7 @@
     <modules>
         <module>testcontainers-db</module>
         <module>testcontainers-h2</module>
+        <module>testcontainers-mockserver</module>
     </modules>
 
 </project>
