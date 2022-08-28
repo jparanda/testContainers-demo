@@ -5,12 +5,22 @@ import com.juan.learn.testcontainers.TestContainersDbApplication;
 import com.juan.learn.testcontainers.base.AbstractContainers;
 import com.juan.learn.testcontainers.todo.model.Todo;
 import org.assertj.core.api.Assertions;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +28,22 @@ import java.util.Map;
 
 @SpringBootTest(classes = TestContainersDbApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TodoControllerContainers extends AbstractContainers {
+@Testcontainers
+class TodoControllerContainersIntegrationFirstTest {
+
+    @Container
+    private static final MySQLContainer MYSQL = (MySQLContainer) new MySQLContainer(DockerImageName.parse("mysql:5.7"))
+            .withDatabaseName("todo_db")
+            .withUsername("user")
+            .withPassword("12345")
+            .withInitScript("schema.sql");
+
+    @BeforeAll
+    private static void initDatabaseProperties() {
+        System.setProperty("spring.datasource.url", MYSQL.getJdbcUrl());
+        System.setProperty("spring.datasource.username", MYSQL.getUsername());
+        System.setProperty("spring.datasource.password", MYSQL.getPassword());
+    }
 
     @LocalServerPort
     private int port;
