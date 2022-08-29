@@ -2,21 +2,21 @@ package com.juan.learn.testcontainers.todo.controller;
 
 
 import com.juan.learn.testcontainers.TestContainersDbApplication;
-import com.juan.learn.testcontainers.base.AbstractContainers;
 import com.juan.learn.testcontainers.todo.model.Todo;
-import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.BeforeClass;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.*;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -32,10 +32,11 @@ import java.util.Map;
 class TodoControllerContainersIntegrationFirstTest {
 
     @Container
-    private static final MySQLContainer MYSQL = (MySQLContainer) new MySQLContainer(DockerImageName.parse("mysql:5.7"))
+    private static final MySQLContainer MYSQL = new MySQLContainer<>(DockerImageName.parse("mysql:5.7"))
             .withDatabaseName("todo_db")
             .withUsername("user")
             .withPassword("12345")
+            .withExposedPorts(Integer.valueOf("3306"))
             .withInitScript("schema.sql");
 
     @BeforeAll
@@ -62,8 +63,8 @@ class TodoControllerContainersIntegrationFirstTest {
                 .exchange("http://localhost:" + port + "/todo-service/api/todos", HttpMethod.GET, entity, Todo[].class);
 
         // Assert
-        Assertions.assertThat(todosRespEntity.getBody().length).isEqualTo(3);
-        Assertions.assertThat(todosRespEntity.getStatusCodeValue()).isEqualTo(200);
+        assertThat(todosRespEntity.getBody().length).isEqualTo(3);
+        assertThat(todosRespEntity.getStatusCodeValue()).isEqualTo(200);
     }
 
     @Test
@@ -78,8 +79,8 @@ class TodoControllerContainersIntegrationFirstTest {
                 .exchange("http://localhost:" + port + "/todo-service/api/todos/{id}", HttpMethod.GET, entity, Todo.class, 1);
 
         // Assert
-        Assertions.assertThat(todoRespEntity.getStatusCodeValue()).isEqualTo(200);
-        Assertions.assertThat(todoRespEntity.getBody().getOwner()).isEqualTo("Juan");
+        assertThat(todoRespEntity.getStatusCodeValue()).isEqualTo(200);
+        assertThat(todoRespEntity.getBody().getOwner()).isEqualTo("Juan");
     }
 
     @Test
@@ -97,8 +98,8 @@ class TodoControllerContainersIntegrationFirstTest {
                 .exchange("http://localhost:" + port + "/todo-service/api/todos", HttpMethod.POST, entity, Todo.class);
 
         // Assert
-        Assertions.assertThat(todoRespEntity.getStatusCodeValue()).isEqualTo(201);
-        Assertions.assertThat(todoRespEntity.getBody().getOwner()).isEqualTo("Cata");
+        assertThat(todoRespEntity.getStatusCodeValue()).isEqualTo(201);
+        assertThat(todoRespEntity.getBody().getOwner()).isEqualTo("Cata");
     }
 
     @Test
@@ -114,6 +115,6 @@ class TodoControllerContainersIntegrationFirstTest {
                 .getForObject("http://localhost:" + port + "/todo-service/api/todos", Todo[].class);
 
         // Assert
-        Assertions.assertThat(todos.length).isEqualTo(3);
+        assertThat(todos).hasSize(3);
     }
 }
